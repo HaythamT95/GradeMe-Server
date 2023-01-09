@@ -26,6 +26,7 @@ const app = express()
 const upload = multer();
 
 const databaseUrl = "mongodb+srv://root:Aa123456@cluster0.umjcpkr.mongodb.net/test"
+const JWTkey="2420EB49E87E274F1E407BF2DE1EE36B09A142C2E6F895054B2284827EAC01D0"
 
 mongoose.connect(databaseUrl).then(() => console.log("DB connected")).catch((err) => console.log("DB Failed to Connect", err))
 
@@ -58,7 +59,7 @@ app.post("/signin",async (req,res)=>{
             });
         }
         // create signed token
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ _id: user._id }, JWTkey, {
             expiresIn: "7d",
         });
         user.password = undefined;
