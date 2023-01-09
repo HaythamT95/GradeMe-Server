@@ -15,6 +15,10 @@ import { fileURLToPath } from "url"
 import { dirname } from "path"
 import * as fsExtra from 'fs-extra'
 
+import User from "../../models/user.js";
+import { hashPassword, comparePassword } from "./server/helpers/auth.js";
+import jwt from "jsonwebtoken";
+
 dotenv.config()
 
 const m = morgan
@@ -32,6 +36,39 @@ app.use("/api", router)
 
 app.get("/hello", (req, res) => {
     res.send("hello world from the API from index.mjs")
+})
+
+app.post("/signin",async (req,res)=>{
+    try {
+        const { email, password } = req.body;
+        // check if our db has user with that email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.json({
+                error: "No user found",
+            });
+        }
+        // check password
+        const match = await comparePassword(password, user.password);
+        if (!match) {
+            return res.json({
+                error: "Wrong password",
+            });
+        }
+        // create signed token
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "7d",
+        });
+        user.password = undefined;
+        user.secret = undefined;
+        res.json({
+            token,
+            user,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send("Error. Try again.");
+    }
 })
 
 /**
