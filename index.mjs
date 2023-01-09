@@ -15,7 +15,7 @@ import { fileURLToPath } from "url"
 import { dirname } from "path"
 import * as fsExtra from 'fs-extra'
 
-import User from "../../models/user.js";
+import User from "./models/user.js";
 import { hashPassword, comparePassword } from "./server/helpers/auth.js";
 import jwt from "jsonwebtoken";
 
