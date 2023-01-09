@@ -25,7 +25,9 @@ const m = morgan
 const app = express()
 const upload = multer();
 
-mongoose.connect(process.env.DATABASE).then(() => console.log("DB connected")).catch((err) => console.log("DB Failed to Connect", err))
+const databaseUrl = "mongodb+srv://root:Aa123456@cluster0.umjcpkr.mongodb.net/test"
+
+mongoose.connect(databaseUrl).then(() => console.log("DB connected")).catch((err) => console.log("DB Failed to Connect", err))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
