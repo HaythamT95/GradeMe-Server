@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "hello-world-server",
-    "slug": "hello-world-server",
+    "name": "GradeMe-Server",
+    "slug": "GradeMe-Server",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
