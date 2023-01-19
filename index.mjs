@@ -305,7 +305,7 @@ app.get('/downloadUserFile', async (req, res) => {
          */
         
         // This is used for Vercel
-        const fileToDownload =file[0].title + '.' + file[0].fileType
+        const fileToDownload = dataElement.studentName + '.' + dataElement.fileType
         fs.writeFileSync(`/tmp/${fileToDownload}`,buff);
         res.download(`/tmp/${fileToDownload}`);
 
