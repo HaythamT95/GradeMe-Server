@@ -356,7 +356,7 @@ app.get('/download/:id', async (req, res) => {
          res.download(fileToDownload);
          */
         const fileToDownload =file[0].title + '.' + file[0].fileType
-        fs.writeFileSync(`/tmp/${fileToDownload}`);
+        fs.writeFileSync(`/tmp/${fileToDownload}`,buff);
         res.download(`/tmp/${fileToDownload}`);
 
     } catch (error) {
