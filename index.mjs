@@ -346,12 +346,18 @@ app.get('/download/:id', async (req, res) => {
 
         let buff = Buffer.from(file[0].exercise.buffer, 'base64');
 
-        let __dirname = dirname(fileURLToPath(import.meta.url)) + '/downloads/';
+        /**
+         * This is used in local computer
+         * let __dirname = dirname(fileURLToPath(import.meta.url)) + '/downloads/';
         __dirname = __dirname.replaceAll("\\", "/");
         const fileToDownload = __dirname + file[0].title + '.' + file[0].fileType
         fsExtra.emptyDirSync(__dirname);
         fs.writeFileSync(fileToDownload, buff);
-        res.download(fileToDownload);
+         res.download(fileToDownload);
+         */
+        const fileToDownload =file[0].title + '.' + file[0].fileType
+        fs.writeFileSync(`/tmp/${fileToDownload}`);
+        res.download(`/tmp/${fileToDownload}`);
 
     } catch (error) {
         console.error(error);
