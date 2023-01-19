@@ -294,12 +294,21 @@ app.get('/downloadUserFile', async (req, res) => {
         const dataElement = listOfSubmitter.find((el) => el.studentID.equals(studentID));
         let buff = Buffer.from(dataElement.file.buffer, 'base64');
 
-        let __dirname = dirname(fileURLToPath(import.meta.url)) + '/downloads/';
+        /**
+         * This is used for local computer
+         * let __dirname = dirname(fileURLToPath(import.meta.url)) + '/downloads/';
         __dirname = __dirname.replaceAll("\\", "/");
         const fileToDownload = __dirname + dataElement.studentName + '.' + dataElement.fileType
         fsExtra.emptyDirSync(__dirname);
         fs.writeFileSync(fileToDownload, buff);
         res.download(fileToDownload);
+         */
+        
+        // This is used for Vercel
+        const fileToDownload =file[0].title + '.' + file[0].fileType
+        fs.writeFileSync(`/tmp/${fileToDownload}`,buff);
+        res.download(`/tmp/${fileToDownload}`);
+
     }
     catch (e) {
         res.status(500).send(error);
@@ -355,6 +364,7 @@ app.get('/download/:id', async (req, res) => {
         fs.writeFileSync(fileToDownload, buff);
          res.download(fileToDownload);
          */
+        //This is used to download from Vercel
         const fileToDownload =file[0].title + '.' + file[0].fileType
         fs.writeFileSync(`/tmp/${fileToDownload}`,buff);
         res.download(`/tmp/${fileToDownload}`);
