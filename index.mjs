@@ -197,7 +197,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         if (resultOfExerciseUpdate === null) {
             resultOLaboratoryUpdate = await Laboratory.findOneAndUpdate(filter, updateQuery);
         }
-        
+
         if (resultOLaboratoryUpdate === null && resultOfExerciseUpdate === null) {
             const exerciseForStudent = {
                 studentID: mongoose.Types.ObjectId(req.body.studentID), studentName: req.body.studentName,
@@ -223,16 +223,12 @@ app.post('/upload', upload.single('file'), async (req, res) => {
  * Upload images from users
  */
 app.post('/uploadImage', upload.single('image'), async (req, res) => {
-    try {
-        let image = await Images.findOneAndUpdate(
-            { userId: mongoose.Types.ObjectId(req.body.userid) },
-            { imageType: req.file.mimetype, image: req.file.buffer },
-            { upsert: true, new: true }
-        );
-         res.send("succesfully saved");
-    } catch (err) {
-         res.status(500).send(err);
-    }
+    let image = await Images.findOneAndUpdate(
+        { userId: mongoose.Types.ObjectId(req.body.userid) },
+        { imageType: req.file.mimetype, image: req.file.buffer },
+        { upsert: true, new: true }
+    );
+    res.send("succesfully saved");
 })
 
 /**
@@ -303,10 +299,10 @@ app.get('/downloadUserFile', async (req, res) => {
         fs.writeFileSync(fileToDownload, buff);
         res.download(fileToDownload);
          */
-        
+
         // This is used for Vercel
         const fileToDownload = dataElement.studentName + '.' + dataElement.fileType
-        fs.writeFileSync(`/tmp/${fileToDownload}`,buff);
+        fs.writeFileSync(`/tmp/${fileToDownload}`, buff);
         res.download(`/tmp/${fileToDownload}`);
 
     }
@@ -365,8 +361,8 @@ app.get('/download/:id', async (req, res) => {
          res.download(fileToDownload);
          */
         //This is used to download from Vercel
-        const fileToDownload =file[0].title + '.' + file[0].fileType
-        fs.writeFileSync(`/tmp/${fileToDownload}`,buff);
+        const fileToDownload = file[0].title + '.' + file[0].fileType
+        fs.writeFileSync(`/tmp/${fileToDownload}`, buff);
         res.download(`/tmp/${fileToDownload}`);
 
     } catch (error) {
