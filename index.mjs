@@ -171,27 +171,52 @@ app.post('/upload', upload.single('file'), async (req, res) => {
                 });
             }
         }
-
+        res.status(200).send("success");
     }
 
     /**
      * Upload file to existing collection
      */
     if (req.body.role === "Student") {
-        const exerciseForStudent = { studentID: mongoose.Types.ObjectId(req.body.studentID), studentName: req.body.studentName, file: req.file.buffer, fileType: type, grade: "", comments: "" }
-        const exerciseUpload = await Exercise.findOneAndUpdate({ _id: req.body.exerciseID }, {
-            $push: {
-                listOfSubmitter: exerciseForStudent
-            }
-        });
 
-        const labUpload = await Laboratory.findOneAndUpdate({ _id: req.body.exerciseID }, {
-            $push: {
-                listOfSubmitter: exerciseForStudent
+        let filter = {
+            _id: mongoose.Types.ObjectId(req.body.exerciseID),
+            "listOfSubmitter.studentID": mongoose.Types.ObjectId(req.body.studentID)
+        };
+        let updateQuery = {
+            $set: {
+                "listOfSubmitter.$.studentID": mongoose.Types.ObjectId(req.body.studentID),
+                "listOfSubmitter.$.studentName": req.body.studentName,
+                "listOfSubmitter.$.submitDate": req._startTime,
+                "listOfSubmitter.$.file": req.file.buffer,
+                "listOfSubmitter.$.fileType": type,
             }
-        });
+        };
+        let resultOfExerciseUpdate = await Exercise.findOneAndUpdate(filter, updateQuery);
+        let resultOLaboratoryUpdate;
+        if (resultOfExerciseUpdate === null) {
+            resultOLaboratoryUpdate = await Laboratory.findOneAndUpdate(filter, updateQuery);
+        }
+        
+        if (resultOLaboratoryUpdate === null && resultOfExerciseUpdate === null) {
+            const exerciseForStudent = {
+                studentID: mongoose.Types.ObjectId(req.body.studentID), studentName: req.body.studentName,
+                submitDate: req._startTime, file: req.file.buffer, fileType: type, grade: "", comments: ""
+            }
+            const exerciseUpload = await Exercise.findOneAndUpdate({ _id: req.body.exerciseID }, {
+                $push: {
+                    listOfSubmitter: exerciseForStudent
+                }
+            });
+            const labUpload = await Laboratory.findOneAndUpdate({ _id: req.body.exerciseID }, {
+                $push: {
+                    listOfSubmitter: exerciseForStudent
+                }
+            });
+        }
+        res.status(200).send("success");
     }
-    res.status(200).send("success");
+
 });
 
 /**
@@ -221,12 +246,12 @@ app.get('/getImageOfUser/:id', (req, res) => {
         if (err) {
             res.status(404).send(err);
         } else {
-            if (!img){
-                
+            if (!img) {
+
                 res.status(404).send("notfound");
                 return;
             }
-           
+
             const binaryData = new Binary(img.image);
             res.send(binaryData);
         }
