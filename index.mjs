@@ -226,12 +226,12 @@ app.post('/uploadImage', upload.single('image'), async (req, res) => {
     try {
         let image = await Images.findOneAndUpdate(
             { userId: mongoose.Types.ObjectId(req.body.userid) },
-            { imageType: type, image: req.file.buffer },
+            { imageType: req.file.mimetype, image: req.file.buffer },
             { upsert: true, new: true }
         );
-        return res.send("succesfully saved");
+         res.send("succesfully saved");
     } catch (err) {
-        return res.send(500, { error: err });
+         res.status(500).send(err);
     }
 })
 
